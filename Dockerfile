@@ -34,7 +34,3 @@ EXPOSE 80 5678
 # 4. Run Command
 # STANDARD MODE (Default):
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:80", "app:app"]
-
-# DEBUG MODE (Copy and replace the line above if you need to attach a debugger):
-# Note: Workers (-w) set to 1 because you cannot debug multiple workers easily.
-# CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "gunicorn", "-w", "1", "-b", "0.0.0.0:80", "app:app"]
