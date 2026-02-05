@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0"><i class="bi bi-magic me-2"></i>Upload KTP for Auto-Fill</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-cloud-arrow-up text-primary" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">
+                            Upload an image (JPG/PNG) or PDF of a KTP.<br>
+                            The AI Agent will extract the data and fill the form for you.
+                        </p>
+                    </div>
+                    
+                    <form id="uploadForm" action="/ktp/upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="file" class="form-label fw-bold">Select Document</label>
+                            <input class="form-control form-control-lg" type="file" id="file" name="file" accept="image/*,.pdf" required>
+                        </div>
+                        
+                        <!-- Loading Alert (Hidden by default) -->
+                        <div id="processingAlert" class="alert alert-info d-none d-flex align-items-center" role="alert">
+                            <div class="spinner-border spinner-border-sm text-info me-2" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div>
+                                <strong>AI is thinking...</strong> Extracting data from your document.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <!-- Spinner Icon (Hidden by default) -->
+                                <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                <!-- Button Text -->
+                                <span id="btnText"><i class="bi bi-cpu"></i> Process with AI Agent</span>
+                            </button>
+                            
+                            <div class="text-center mt-2">
+                                <span class="text-muted">or</span>
+                            </div>
+                            <a href="/ktp/add" class="btn btn-outline-secondary" id="skipBtn">Skip & Enter Manually</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        // Get elements
+        const submitBtn = document.getElementById('submitBtn');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
+        const skipBtn = document.getElementById('skipBtn');
+        const processingAlert = document.getElementById('processingAlert');
+        const fileInput = document.getElementById('file');
+
+        // Only proceed if a file is selected
+        if (fileInput.files.length > 0) {
+            // Disable buttons to prevent double submission
+            submitBtn.disabled = true;
+            skipBtn.classList.add('disabled');
+
+            // Show spinner and update text
+            btnSpinner.classList.remove('d-none');
+            btnText.textContent = ' Analyzing Document...';
+            
+            // Show the alert banner
+            processingAlert.classList.remove('d-none');
+        }
+    });
+</script>
+{% endblock %}

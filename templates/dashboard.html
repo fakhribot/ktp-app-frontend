@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+    <div>
+        <h2 class="mb-0 fw-bold text-secondary">Dashboard</h2>
+        <p class="text-muted">Manage KTP Records</p>
+    </div>
+    <div class="d-flex gap-2">
+        <!-- New Button for AI Scan -->
+        <a href="/ktp/upload" class="btn btn-primary">
+            <i class="bi bi-magic me-2"></i>Scan KTP (AI)
+        </a>
+        <!-- Standard Manual Add -->
+        <a href="/ktp/add" class="btn btn-outline-success">
+            <i class="bi bi-plus-lg me-2"></i>Manual Entry
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-white py-3">
+        <form method="GET" action="/" class="d-flex">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0 ps-0 shadow-none" 
+                       placeholder="Search by NIK, Name, Address..." value="{{ search }}">
+                <button type="submit" class="btn btn-dark">Search</button>
+            </div>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>NIK</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Birth Date</th>
+                        <th>Address</th>
+                        <th>Reg. Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if records %}
+                        {% for ktp in records %}
+                        <tr>
+                            <td class="fw-bold font-monospace text-primary">{{ ktp.nik }}</td>
+                            <td class="fw-semibold">{{ ktp.full_name }}</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    {{ ktp.gender }}
+                                </span>
+                            </td>
+                            <td>{{ ktp.birth_date }}</td>
+                            <td class="text-truncate" style="max-width: 200px;">{{ ktp.address }}</td>
+                            <td>{{ ktp.registration_date if ktp.registration_date else '-' }}</td>
+                            <td class="text-end">
+                                <a href="/ktp/edit/{{ ktp.nik }}" class="btn btn-sm btn-light text-primary" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <form action="/ktp/delete/{{ ktp.nik }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                    <button type="submit" class="btn btn-sm btn-light text-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                No records found.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+                Showing {{ start + 1 }} to {{ start + records|length }} of {{ total_records }}
+            </small>
+            
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="/?page={{ page - 1 }}&search={{ search }}">Previous</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">{{ page }} / {{ total_pages }}</span>
+                    </li>
+                    <li class="page-item {% if page == total_pages or total_pages == 0 %}disabled{% endif %}">
+                        <a class="page-link" href="/?page={{ page + 1 }}&search={{ search }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

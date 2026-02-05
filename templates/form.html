@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-lg-10">
+        
+        <!-- AI Success Banner -->
+        {% if ktp and request.endpoint == 'add_ktp' %}
+        <div class="alert alert-success border-success d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+            <div>
+                <strong>AI Extraction Complete!</strong><br>
+                Please review the data below before saving. Some fields may need manual correction.
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    {% if request.endpoint == 'edit_ktp' %}
+                        <i class="bi bi-pencil-square me-2"></i>Edit Record
+                    {% else %}
+                        <i class="bi bi-person-plus me-2"></i>Add New Record
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <h6 class="mb-3 text-primary fw-bold text-uppercase border-bottom pb-2">Personal Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">NIK <span class="text-danger">*</span></label>
+                            <!-- NIK is Readonly ONLY if we are in Edit Mode (URL contains 'edit') -->
+                            <input type="text" name="nik" class="form-control font-monospace" 
+                                   value="{{ ktp.nik if ktp else '' }}" 
+                                   {% if request.endpoint == 'edit_ktp' %}readonly style="background-color: #e9ecef;"{% endif %} 
+                                   required placeholder="16 digit NIK" maxlength="16">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="full_name" class="form-control" value="{{ ktp.full_name if ktp else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Birth Place <span class="text-danger">*</span></label>
+                            <input type="text" name="birth_place" class="form-control" value="{{ ktp.birth_place if ktp else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Birth Date <span class="text-danger">*</span></label>
+                            <!-- Value must be YYYY-MM-DD -->
+                            <input type="date" name="birth_date" class="form-control" value="{{ ktp.birth_date if ktp else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-select">
+                                <option value="">-- Select --</option>
+                                <!-- Use | upper filter to handle case sensitivity from OCR -->
+                                <option value="LAKI-LAKI" {% if ktp and ktp.gender|upper == 'LAKI-LAKI' %}selected{% endif %}>LAKI-LAKI</option>
+                                <option value="PEREMPUAN" {% if ktp and ktp.gender|upper == 'PEREMPUAN' %}selected{% endif %}>PEREMPUAN</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Blood Type</label>
+                            <select name="blood_type" class="form-select">
+                                <option value="">-- Select --</option>
+                                <option value="A" {% if ktp and ktp.blood_type == 'A' %}selected{% endif %}>A</option>
+                                <option value="B" {% if ktp and ktp.blood_type == 'B' %}selected{% endif %}>B</option>
+                                <option value="AB" {% if ktp and ktp.blood_type == 'AB' %}selected{% endif %}>AB</option>
+                                <option value="O" {% if ktp and ktp.blood_type == 'O' %}selected{% endif %}>O</option>
+                                <option value="-" {% if ktp and ktp.blood_type == '-' %}selected{% endif %}>-</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-4 mb-3 text-primary fw-bold text-uppercase border-bottom pb-2">Address & Other Details</h6>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Address <span class="text-danger">*</span></label>
+                            <textarea name="address" class="form-control" rows="2" required>{{ ktp.address if ktp else '' }}</textarea>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">RT/RW</label>
+                            <input type="text" name="rt_rw" class="form-control" value="{{ ktp.rt_rw if ktp else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Village/Kelurahan</label>
+                            <input type="text" name="village_kelurahan" class="form-control" value="{{ ktp.village_kelurahan if ktp else '' }}">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">District/Kecamatan</label>
+                            <input type="text" name="district_kecamatan" class="form-control" value="{{ ktp.district_kecamatan if ktp else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Religion</label>
+                            <input type="text" name="religion" class="form-control" value="{{ ktp.religion if ktp else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Marital Status</label>
+                            <input type="text" name="marital_status" class="form-control" value="{{ ktp.marital_status if ktp else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Occupation</label>
+                            <input type="text" name="occupation" class="form-control" value="{{ ktp.occupation if ktp else '' }}">
+                        </div>
+                         <div class="col-md-6">
+                            <label class="form-label">Citizenship</label>
+                            <input type="text" name="citizenship" class="form-control" value="{{ ktp.citizenship if ktp else 'WNI' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="text" name="expiry_date" class="form-control" value="{{ ktp.expiry_date if ktp else 'SEUMUR HIDUP' }}">
+                        </div>
+                         <div class="col-md-6">
+                            <label class="form-label">Registration Date</label>
+                            <!-- Default to today if empty and adding new -->
+                            <input type="date" name="registration_date" class="form-control" value="{{ ktp.registration_date if ktp and ktp.registration_date else '' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 d-flex justify-content-end gap-2">
+                        <a href="/" class="btn btn-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-2"></i>Save Record
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

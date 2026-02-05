@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center vh-100" style="margin-top: -50px;">
+    <div class="col-md-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-card-heading text-primary" style="font-size: 3rem;"></i>
+            <h3 class="mt-2 fw-bold">KTP App</h3>
+        </div>
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <h5 class="text-center mb-4 text-muted">Please Sign In</h5>
+                <form method="POST" action="/login">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                            <input type="text" name="username" class="form-control" required autofocus placeholder="Enter username">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="password" class="form-control" required placeholder="Enter password">
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-light border-0 py-3">
+                <small class="text-muted">PoC BJB Application &copy; 2026</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
