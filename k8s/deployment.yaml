@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      nodeSelector:
+        role: frontend
+      serviceAccountName: default
+      containers:
+      - name: frontend
+        image: asia-southeast2-docker.pkg.dev/poc-3-pt-eikon/bjb-poc/backend@sha256:111e5e8bcac7500830f6bcd4ff0c20d71aa8b3d4b82b699ca79dee5484d5dc61
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+            
+        # # HEALTH CHECKS
+        # readinessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   periodSeconds: 10
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: 80
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 20
+
+        # RESOURCES
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  annotations:
+    cloud.google.com/backend-config: '{"ports": {"80":"bjb-backendconfig"}}'
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  selector:
+    app: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
